@@ -1,5 +1,5 @@
 const PREFIX='table-for-two-'+encodeURIComponent(new URL(self.registration.scope).pathname)+'-';
-const CACHE=PREFIX+'v1.0.1';
+const CACHE=PREFIX+'v1.0.2';
 const ASSETS=['./','./index.html','./style.css','./game.css','./app.js','./rules.js','./favicon.svg','./manifest.webmanifest','./icon-192.png','./icon-512.png','./apple-touch-icon.png'];
 const urls=ASSETS.map(path=>new URL(path,self.registration.scope).href);
 self.addEventListener('install',event=>{event.waitUntil((async()=>{const cache=await caches.open(CACHE);for(const url of urls){const response=await fetch(new Request(url,{cache:'reload',credentials:'same-origin'}));if(!response.ok||response.redirected)throw Error('App assets not ready');await cache.put(url,response)}})())});

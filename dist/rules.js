@@ -2,7 +2,14 @@
 export const copy = value => JSON.parse(JSON.stringify(value));
 const pick = (items, rng=Math.random) => items[Math.floor(rng()*items.length)];
 export const LINES = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
-export function ticResult(board){for(const line of LINES)if(board[line[0]]&&line.every(i=>board[i]===board[line[0]]))return{winner:board[line[0]],line};return board.every(Boolean)?{winner:'draw',line:[]}:null}
+export function ticResult(board){
+  for(const line of LINES){
+    if(board[line[0]]&&line.every(i=>board[i]===board[line[0]]))return{winner:board[line[0]],line};
+  }
+  // A line containing both marks can never become a winning line.
+  const canStillWin=LINES.some(line=>!line.some(i=>board[i]===1)||!line.some(i=>board[i]===2));
+  return canStillWin?null:{winner:'draw',line:[],reason:'blocked'};
+}
 export function newTic(start=1){return{board:Array(9).fill(0),turn:start,result:null,moves:0}}
 export function ticMove(state,index){if(state.result||!Number.isInteger(index)||index<0||index>8||state.board[index])return null;const s=copy(state);s.board[index]=s.turn;s.moves++;s.result=ticResult(s.board);if(!s.result)s.turn=3-s.turn;return s}
 export function ticAI(s,level='gentle',rng=Math.random){const free=s.board.map((v,i)=>v?null:i).filter(i=>i!==null);if(!free.length||s.result)return null;if(level==='gentle')return pick(free,rng);const player=s.turn;function score(b,t,depth){const end=ticResult(b);if(end)return end.winner==='draw'?0:end.winner===player?10-depth:depth-10;const values=[];for(let i=0;i<9;i++)if(!b[i]){b[i]=t;values.push(score(b,3-t,depth+1));b[i]=0}return t===player?Math.max(...values):Math.min(...values)}const values=free.map(i=>{const b=[...s.board];b[i]=player;return score(b,3-player,0)});const best=Math.max(...values);return pick(free.filter((_,i)=>values[i]===best),rng)}
