@@ -1,0 +1,12 @@
+{
+  "name": "table-for-two",
+  "description": "Simple, ad-free games for shared iPhone and iPad play.",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "test": "node --test",
+    "start": "node preview.mjs",
+    "check": "node --check dist/app.js && node --check dist/rules.js && node --check dist/sw.js && node --test"
+  }
+}
